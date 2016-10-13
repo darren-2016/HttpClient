@@ -1,11 +1,20 @@
 # Basic HTTP Client Module
-import httplib
+import httplib, urllib
 
-# Make the connection
-connection = httplib.HTTPSConnection("www.google.com")
+
+# Make the connection with the HTTP server
+serverurl = "www.google.com"
+connection = httplib.HTTPSConnection(serverurl)
+
+# Set the debug level (0 is the default, indicating no debug output is displayed)
+connection.set_debuglevel(0)
+
+#### Testing out a GET request
+
+# Send a GET request to the server at the url '/' 
 connection.request("GET", "/")
 
-# Check the response
+# Read the response after the request has been sent
 response = connection.getresponse()
 print response.status, response.reason
 
@@ -13,6 +22,6 @@ print response.status, response.reason
 data = response.read()
 print data
 
-# Close the connection
+# Close the connection to the server
 connection.close()
 
