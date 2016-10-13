@@ -1,4 +1,13 @@
+###################################################
 # Basic HTTP Client Module
+#
+# A Simple HTTP Client module for testing out and 
+# exploring HTTP functionality. 
+#
+# Darren J. Draper
+# Created: October 2016
+#
+
 import httplib, urllib
 
 
