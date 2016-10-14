@@ -17,6 +17,23 @@ import json
 
 
 ##################################################
+# SetServerUrl
+#
+def SetServerUrl(url):
+    global serverurl
+    serverurl = url
+    print "Server URL: " + serverurl
+
+
+##################################################
+# GetServerUrl
+#
+def GetServerUrl():
+    global serverurl
+    return serverurl
+
+
+##################################################
 # GetAuthentication
 # Take the UserID and Password and return the 
 # authentication string.
@@ -45,6 +62,7 @@ def TestGETRequest(connection):
     # Get data
     #data = response.read()
     #print data
+
 
 ##################################################
 # CustomRequest
@@ -102,7 +120,7 @@ def TestSetupAccount(connection):
 ####################
 # SendSMS
 # Send a message. 
-def SendSMS(connection, userid, passwd, requesturl, message, phone, printlog):
+def SendSMS(connection, userid, passwd, resourceuri, message, phone, printlog):
     if printlog > 0:
         print "\n-----------------------------------------\n###SEND SMS"
     
@@ -114,9 +132,9 @@ def SendSMS(connection, userid, passwd, requesturl, message, phone, printlog):
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Authorization": auth}
     
-    connection.request("POST", requesturl, params, headers)
+    connection.request("POST", resourceuri, params, headers)
     
-    #connection.putrequest("POST", requesturl)
+    #connection.putrequest("POST", resourceuri)
     #connection.putheader('Authorization', auth)
     #connection.endheaders()
 
@@ -125,18 +143,20 @@ def SendSMS(connection, userid, passwd, requesturl, message, phone, printlog):
     response = connection.getresponse()
     print "Response status/reason: " + str(response.status), response.reason
 
+serverurl = ""
+
 
 ##################################################
 # ReadSMS action
 #
-def ReadSMS(connection, userid, passwd, requesturl, printlog):
+def ReadSMS(connection, userid, passwd, resourceuri, printlog):
     if printlog > 0:
         print "\n-----------------------------------------\n###READ SMS"
     
     try:
         auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
         response = requests.get(
-            url=requesturl,
+            url=GetServerUrl() + resourceuri,
             headers={
                 "Authorization": auth,
                 "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
@@ -159,13 +179,13 @@ def ReadSMS(connection, userid, passwd, requesturl, printlog):
 ##################################################
 # NewIncomingPhone
 #
-def NewIncomingPhone(connection, userid, passwd, requesturl, phone, sid, workerpassword, friendlyname, printlog ):
+def NewIncomingPhone(connection, userid, passwd, resourceuri, phone, sid, workerpassword, friendlyname, printlog ):
     if printlog > 0:
         print "\n-----------------------------------------\n###NEW INCOMING PHONE"
     try:
         auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
         response = requests.post(
-            url=requesturl,
+            url=GetServerUrl() + resourceuri,
             headers={
                 "Authorization": auth,
                 "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
