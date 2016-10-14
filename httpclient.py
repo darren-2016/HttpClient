@@ -217,7 +217,7 @@ def NewIncomingPhone(connection, userid, passwd, resourceuri, phone, sid, worker
 ##################################################
 # WorkerPending
 #
-def WorkerPending(userid, passwd, requesturl, printlog):
+def WorkerPending(userid, passwd, resourceuri, printlog):
     if printlog > 0:
         print "\n-----------------------------------------\n###WORKER PENDING"
 
@@ -225,7 +225,7 @@ def WorkerPending(userid, passwd, requesturl, printlog):
         auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
         print "auth = " + auth
         response = requests.get(
-            url=requesturl,
+            url=GetServerUrl() + resourceuri,
             headers={
                 "Authorization": auth,
             },
@@ -248,7 +248,7 @@ def WorkerPending(userid, passwd, requesturl, printlog):
 ##################################################
 # WorkerReceived
 #
-def WorkerReceived(userid, passwd, requesturl, phonefrom, phoneto, body, printlog):
+def WorkerReceived(userid, passwd, resourceuri, phonefrom, phoneto, body, printlog):
     if printlog > 0:
         print "\n-----------------------------------------\n###WORKER RECEIVED"
 
@@ -256,7 +256,7 @@ def WorkerReceived(userid, passwd, requesturl, phonefrom, phoneto, body, printlo
         auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
         print "auth = " + auth
         response = requests.post(
-            url=requesturl,
+            url=GetServerUrl() + resourceuri,
             headers={
                 "Authorization": auth,
                 "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
@@ -278,7 +278,7 @@ def WorkerReceived(userid, passwd, requesturl, phonefrom, phoneto, body, printlo
 ##################################################
 # ListMessages
 #
-def ListMessages(userid, passwd, requesturl, printlog):
+def ListMessages(userid, passwd, resourceuri, printlog):
     if printlog > 0:
         print "\n-----------------------------------------\n###LIST MESSAGES"
 
@@ -286,7 +286,7 @@ def ListMessages(userid, passwd, requesturl, printlog):
         auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
         print "auth = " + auth
         response = requests.get(
-            url=requesturl,
+            url=GetServerUrl() + resourceuri,
             headers={
                 "Authorization": auth,
                 "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
