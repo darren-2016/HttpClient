@@ -182,7 +182,8 @@ def ReadSMS2(connection, userid, passwd, requesturl):
 # NewIncomingPhone
 #
 def NewIncomingPhone(connection, userid, passwd, requesturl, phone, sid, workerpassword, friendlyname, printlog ):
-    print "NEW INCOMING PHONE"
+    if printlog > 0:
+        print "\n-----------------------------------------\n###NEW INCOMING PHONE"
     try:
         auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
         response = requests.post(
@@ -220,7 +221,7 @@ def NewIncomingPhone(connection, userid, passwd, requesturl, phone, sid, workerp
 #
 def WorkerPending(userid, passwd, requesturl, printlog):
     if printlog > 0:
-        print "WORKER PENDING"
+        print "\n-----------------------------------------\n###WORKER PENDING"
 
     try:
         auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
@@ -244,6 +245,81 @@ def WorkerPending(userid, passwd, requesturl, printlog):
         
     except requests.exceptions.RequestException:
         print('HTTP Request failed')
+
+
+##################################################
+# WorkerReceived
+#
+def WorkerReceived(userid, passwd, requesturl, phonefrom, phoneto, body, printlog):
+    if printlog > 0:
+        print "\n-----------------------------------------\n###WORKER RECEIVED"
+
+    try:
+        auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
+        print "auth = " + auth
+        response = requests.post(
+            url=requesturl,
+            headers={
+                "Authorization": auth,
+                "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+            },
+            data={
+                "From": phonefrom,
+                "To": phoneto,
+                "Body": body,
+            },
+        )
+        print('Response HTTP Status Code: {status_code}'.format(
+            status_code=response.status_code))
+        print('Response HTTP Response Body: {content}'.format(
+            content=response.content))
+    except requests.exceptions.RequestException:
+        print('HTTP Request failed')
+
+
+##################################################
+# ListMessages
+#
+def ListMessages(userid, passwd, requesturl, printlog):
+    if printlog > 0:
+        print "\n-----------------------------------------\n###LIST MESSAGES"
+
+    try:
+        auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
+        print "auth = " + auth
+        response = requests.get(
+            url=requesturl,
+            headers={
+                "Authorization": auth,
+                "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+            },
+            data={
+            },
+        )
+        print('Response HTTP Status Code: {status_code}'.format(
+            status_code=response.status_code))
+        if printlog == 2:
+            # Pretty-print the JSON output
+            print('Response HTTP Response Body:(PrettyPrint)')
+            parsed = json.loads(response.content)
+            print json.dumps(parsed, indent=4, sort_keys=True)
+        elif printlog == 1:
+            print('Response HTTP Response Body: {content}'.format(
+            content=response.content))
+    except requests.exceptions.RequestException:
+        print('HTTP Request failed')
+
+
+
+
+##################################################
+# TestPUTRequest
+def TestPUTRequest(connection):
+    body = "***thebodycontentshere***"
+    connection.request("PUT", "/file", body)
+    response = connection.getresponse()
+    print response.status, response.reason
+
 
 
 ##################################################
@@ -284,42 +360,4 @@ def WorkerPending2(connection, userid, passwd, requesturl, phone, sid, workerpas
     except requests.exceptions.RequestException:
         print('HTTP Request failed')
 
-##################################################
-# WorkerReceived
-#
-def WorkerReceived(userid, passwd, requesturl, phonefrom, phoneto, body, printlog):
-    if printlog > 0:
-        print "WORKER RECEIVED"
-
-    try:
-        auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
-        print "auth = " + auth
-        response = requests.post(
-            url=requesturl,
-            headers={
-                "Authorization": auth,
-                "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-            },
-            data={
-                "From": phonefrom,
-                "To": phoneto,
-                "Body": body,
-            },
-        )
-        print('Response HTTP Status Code: {status_code}'.format(
-            status_code=response.status_code))
-        print('Response HTTP Response Body: {content}'.format(
-            content=response.content))
-    except requests.exceptions.RequestException:
-        print('HTTP Request failed')
-
-
-
-##################################################
-# TestPUTRequest
-def TestPUTRequest(connection):
-    body = "***thebodycontentshere***"
-    connection.request("PUT", "/file", body)
-    response = connection.getresponse()
-    print response.status, response.reason
 
