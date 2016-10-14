@@ -218,18 +218,15 @@ def NewIncomingPhone(connection, userid, passwd, requesturl, phone, sid, workerp
 ##################################################
 # WorkerPending
 #
-def WorkerPending(userid, passwd, printlog):
+def WorkerPending(userid, passwd, requesturl, printlog):
     if printlog > 0:
         print "WORKER PENDING"
-    
-     # Worker Pending
-    # GET https://dev-messaging-service.appspot.com/worker/pending.json
 
     try:
         auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
         print "auth = " + auth
         response = requests.get(
-            url="https://dev-messaging-service.appspot.com/worker/pending.json",
+            url=requesturl,
             headers={
                 "Authorization": auth,
             },
@@ -286,6 +283,36 @@ def WorkerPending2(connection, userid, passwd, requesturl, phone, sid, workerpas
 
     except requests.exceptions.RequestException:
         print('HTTP Request failed')
+
+##################################################
+# WorkerReceived
+#
+def WorkerReceived(userid, passwd, requesturl, phonefrom, phoneto, body, printlog):
+    if printlog > 0:
+        print "WORKER RECEIVED"
+
+    try:
+        auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
+        print "auth = " + auth
+        response = requests.post(
+            url=requesturl,
+            headers={
+                "Authorization": auth,
+                "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+            },
+            data={
+                "From": phonefrom,
+                "To": phoneto,
+                "Body": body,
+            },
+        )
+        print('Response HTTP Status Code: {status_code}'.format(
+            status_code=response.status_code))
+        print('Response HTTP Response Body: {content}'.format(
+            content=response.content))
+    except requests.exceptions.RequestException:
+        print('HTTP Request failed')
+
 
 
 ##################################################
