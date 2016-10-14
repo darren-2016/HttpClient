@@ -8,10 +8,26 @@
 # Created: October 2016
 #
 
-import httplib, urllib, requests, base64, string
+import httplib
+import urllib
+import requests
+import base64
+import string
+import json
 
 
-#### Testing out a GET request
+##################################################
+# GetAuthentication
+# Take the UserID and Password and return the 
+# authentication string.
+def GetAuthentication(userid, passwd):
+    auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
+    return auth
+    
+
+##################################################
+# TestGETRequest
+# Testing out a GET request
 def TestGETRequest(connection):
     # Send a GET request to the server at the url '/' 
     connection.request("GET", "/")
@@ -30,6 +46,9 @@ def TestGETRequest(connection):
     #data = response.read()
     #print data
 
+##################################################
+# CustomRequest
+#
 def CustomRequest(connection):
     connection.request("GET", "/")
 
@@ -48,7 +67,10 @@ def CustomRequest(connection):
     data = response.read()
     print "Data Length: " + str(len(data))
     print "Data: " + data
-    
+
+##################################################
+# CustomRequest2
+#
 def CustomRequest2(connection):
     connection.request("GET", "/admin/testpage")
 
@@ -67,6 +89,9 @@ def CustomRequest2(connection):
     print "Data Length: " + str(len(data))
     print "Data: " + data
 
+##################################################
+# TestSetupAccount
+#
 def TestSetupAccount(connection):
     connection.request("POST", "/test/setupaccount")
 
@@ -124,12 +149,11 @@ def ReadSMS(connection, userid, passwd, requesturl):
     print "Response status/reason: " + str(response.status), response.reason
 
 
-####################
+##################################################
 # ReadSMS action
 #
 def ReadSMS2(connection, userid, passwd, requesturl):
     # Read SMS        
-    import json
     
     try:
         auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
@@ -154,14 +178,117 @@ def ReadSMS2(connection, userid, passwd, requesturl):
     except requests.exceptions.RequestException:
         print('HTTP Request failed')
 
+##################################################
+# NewIncomingPhone
+#
+def NewIncomingPhone(connection, userid, passwd, requesturl, phone, sid, workerpassword, friendlyname, printlog ):
+    print "NEW INCOMING PHONE"
+    try:
+        auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
+        response = requests.post(
+            url=requesturl,
+            headers={
+                "Authorization": auth,
+                "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+            },
+            data={
+                "PhoneNumber": phone,
+                "Sid": sid,
+                "WorkerPassword": workerpassword,
+                "FriendlyName": friendlyname,
+            },
+        )
+        print('Response HTTP Status Code: {status_code}'.format(
+            status_code=response.status_code))
+        if printlog == 2:
+            # Pretty-print the JSON output
+            print('Response HTTP Response Body:(PrettyPrint)')
+            parsed = json.loads(response.content)
+            print json.dumps(parsed, indent=4, sort_keys=True)
+        elif printlog == 1:
+            print('Response HTTP Response Body: {content}'.format(
+                content=response.content))
 
-####################
-# User/Password Authentication 
-def Authentication():
-    print "Authentication"
+
+    except requests.exceptions.RequestException:
+        print('HTTP Request failed')
+
+
+
+##################################################
+# WorkerPending
+#
+def WorkerPending(userid, passwd, printlog):
+    if printlog > 0:
+        print "WORKER PENDING"
     
+     # Worker Pending
+    # GET https://dev-messaging-service.appspot.com/worker/pending.json
+
+    try:
+        auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
+        print "auth = " + auth
+        response = requests.get(
+            url="https://dev-messaging-service.appspot.com/worker/pending.json",
+            headers={
+                "Authorization": auth,
+            },
+        )
+        print('Response HTTP Status Code: {status_code}'.format(
+            status_code=response.status_code))
+        if printlog == 2:
+            # Pretty-print the JSON output
+            print('Response HTTP Response Body:(PrettyPrint)')
+            parsed = json.loads(response.content)
+            print json.dumps(parsed, indent=4, sort_keys=True)
+        elif printlog == 1:
+            print('Response HTTP Response Body: {content}'.format(
+                content=response.content))
+        
+    except requests.exceptions.RequestException:
+        print('HTTP Request failed')
 
 
+##################################################
+# WorkerPending
+#
+def WorkerPending2(connection, userid, passwd, requesturl, phone, sid, workerpassword, friendlyname, printlog):
+    if printlog > 0:
+        print "WORKER PENDING"
+
+    try:
+        auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
+        print "auth = " + auth
+        response = requests.get(
+            url=requesturl,
+            headers={
+                "Authorization": auth,
+                "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+            },
+            data={
+                "PhoneNumber": phone,
+                "Sid": sid,
+                "WorkerPassword": workerpassword,
+                "FriendlyName": friendlyname,
+            },
+        )
+        print('Response HTTP Status Code: {status_code}'.format(
+            status_code=response.status_code))
+        if printlog == 2:
+            # Pretty-print the JSON output
+            print('Response HTTP Response Body:(PrettyPrint)')
+            parsed = json.loads(response.content)
+            print json.dumps(parsed, indent=4, sort_keys=True)
+        elif printlog == 1:
+            print('Response HTTP Response Body: {content}'.format(
+                content=response.content))
+
+
+    except requests.exceptions.RequestException:
+        print('HTTP Request failed')
+
+
+##################################################
 # TestPUTRequest
 def TestPUTRequest(connection):
     body = "***thebodycontentshere***"
