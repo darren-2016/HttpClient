@@ -102,7 +102,10 @@ def TestSetupAccount(connection):
 ####################
 # SendSMS
 # Send a message. 
-def SendSMS(connection, userid, passwd, requesturl, message, phone):
+def SendSMS(connection, userid, passwd, requesturl, message, phone, printlog):
+    if printlog > 0:
+        print "\n-----------------------------------------\n###SEND SMS"
+    
     auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
     print "Auth: " + auth
 
@@ -152,8 +155,9 @@ def ReadSMS(connection, userid, passwd, requesturl):
 ##################################################
 # ReadSMS action
 #
-def ReadSMS2(connection, userid, passwd, requesturl):
-    # Read SMS        
+def ReadSMS2(connection, userid, passwd, requesturl, printlog):
+    if printlog > 0:
+        print "\n-----------------------------------------\n###READ SMS"
     
     try:
         auth = 'Basic ' + string.strip(base64.encodestring(userid + ':' + passwd))
